@@ -58,6 +58,7 @@ def main():
     ap.add_argument("--lesson", default="Lesson1_Meet_HTML")
     ap.add_argument("--script", default=str(ROOT / "video" / "narration_lesson1.json"))
     ap.add_argument("--estimate", action="store_true", help="no voice: estimate timing, music only")
+    ap.add_argument("--silent", action="store_true", help="no audio track at all; fixed reading time per slide")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
 
@@ -68,7 +69,14 @@ def main():
     render_frames(a.lesson, False, OUT / "frames_full")
     render_frames(a.lesson, True, OUT / "frames_noans")
 
-    if a.estimate:
+    if a.silent:
+        a.estimate = True
+        hold = {1: 5, 7: 4, 13: 9, 14: 13, 15: 13}  # seconds on screen; default 10 (title, section, quiz, activity, recap differ)
+        for s in segs:
+            s["dur"] = hold.get(s["slide"], 10)
+            if s["slide"] == 13 and s["frame"] == "full":
+                s["dur"] = 6
+    elif a.estimate:
         for s in segs:
             s["dur"] = max(4.0, len(s["text"].split()) * 0.40)
     else:
@@ -93,7 +101,8 @@ def main():
         s["len"] = end - s["off"]
 
     music = OUT / "music.wav"
-    run(["python3", str(ROOT / "video" / "make_music.py"), f"{total + 2:.1f}", str(music)])
+    if not a.silent:
+        run(["python3", str(ROOT / "video" / "make_music.py"), f"{total + 2:.1f}", str(music)])
 
     # ffmpeg graph
     cmd = ["ffmpeg", "-y", "-v", "error"]
@@ -104,7 +113,8 @@ def main():
     if not a.estimate:
         for s in segs:
             cmd += ["-i", str(s["audio"])]
-    cmd += ["-i", str(music)]
+    if not a.silent:
+        cmd += ["-i", str(music)]
     mi = n + (0 if a.estimate else n)
     f = []
     for i in range(n):
@@ -115,7 +125,9 @@ def main():
         f.append(f"[{prev}][v{i}]xfade=transition={kind}:duration={T}:offset={segs[i]['off']:.3f}[x{i}]")
         prev = f"x{i}"
     f.append(f"[{prev}]fade=t=out:st={total - 1.2:.2f}:d=1.2[vout]")
-    if a.estimate:
+    if a.silent:
+        pass
+    elif a.estimate:
         f.append(f"[{mi}:a]volume=0.55,afade=t=out:st={total - 2:.2f}:d=2,atrim=0:{total:.2f}[aout]")
     else:
         for i, s in enumerate(segs):
@@ -126,9 +138,10 @@ def main():
         f.append(f"[{mi}:a]volume=0.30[mus]")
         f.append("[mus][vo2]sidechaincompress=threshold=0.02:ratio=6:attack=40:release=700[duck]")
         f.append(f"[vo1][duck]amix=inputs=2:normalize=0,afade=t=out:st={total - 2:.2f}:d=2,atrim=0:{total:.2f},loudnorm=I=-16:TP=-1.5[aout]")
-    out = a.out or str(ROOT / "video" / ("Lesson1_preview_music_only.mp4" if a.estimate else "Lesson1_Meet_HTML_Egyptian_voiceover.mp4"))
-    cmd += ["-filter_complex", ";".join(f), "-map", "[vout]", "-map", "[aout]", "-t", f"{total:.2f}",
-            "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-r", "30", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", out]
+    out = a.out or str(ROOT / "video" / ("Lesson1_Meet_HTML_silent.mp4" if a.silent else "Lesson1_preview_music_only.mp4" if a.estimate else "Lesson1_Meet_HTML_Egyptian_voiceover.mp4"))
+    maps = ["-map", "[vout]"] + ([] if a.silent else ["-map", "[aout]", "-c:a", "aac", "-b:a", "192k"])
+    cmd += ["-filter_complex", ";".join(f), *maps, "-t", f"{total:.2f}",
+            "-c:v", "libx264", "-preset", "medium", "-crf", "22", "-r", "30", "-movflags", "+faststart", out]
     run(cmd)
     print(f"wrote {out}  ({total:.0f}s)")
 

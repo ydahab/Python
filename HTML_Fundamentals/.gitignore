@@ -3,3 +3,4 @@ node_modules/
 qa/
 video/build/
 video/*preview*.mp4
+video/*silent*.mp4
