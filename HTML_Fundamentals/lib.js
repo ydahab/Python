@@ -34,7 +34,7 @@ const ICON_NAMES = [
   "FaQuestionCircle", "FaLightbulb", "FaRocket", "FaStar", "FaBook", "FaHeading", "FaParagraph",
   "FaBold", "FaFolderOpen", "FaMousePointer", "FaMapMarkerAlt", "FaBullseye", "FaTrophy", "FaClock",
   "FaSitemap", "FaCommentDots", "FaEdit", "FaCompass", "FaTools", "FaGraduationCap", "FaPuzzlePiece",
-  "FaPaperPlane", "FaSearch", "FaLayerGroup", "FaHome", "FaBroom", "FaEye", "FaUniversalAccess",
+  "FaFingerprint", "FaVideo", "FaMusic", "FaEnvelope", "FaCloudUploadAlt", "FaCubes", "FaShieldAlt", "FaMobileAlt", "FaMapMarkedAlt", "FaClipboardCheck", "FaCopyright", "FaPaperPlane", "FaSearch", "FaLayerGroup", "FaHome", "FaBroom", "FaEye", "FaUniversalAccess",
   "FaIndent", "FaTags", "FaArrowRight", "FaHandPointRight", "FaUsers", "FaFlagCheckered", "FaWpforms",
 ];
 const ICON_COLORS = [HEX.dk1, HEX.lt1, HEX.accent5, HEX.accent2];
@@ -319,7 +319,7 @@ function createDeck(lesson) {
     if (d.preview) {
       const pv = d.preview, ph_ = pv.h || 2.8;
       const r = browser(s, { x: rx, y: 1.7, w: rw, h: ph_, url: pv.url || "my-page.html", g: 2 });
-      if (pv.runs) tx(s, pv.runs, { x: r.cx, y: r.cy, w: r.cw, h: r.ch, valign: "top", objectName: an(2, "browser_content") });
+      if (pv.runs) tx(s, pv.runs, { x: r.cx, y: r.cy, w: r.cw, h: r.ch, valign: "top", ...(pv.rtl ? { rtlMode: true, lang: "ar-EG", align: "right" } : {}), objectName: an(2, "browser_content") });
       if (pv.draw) pv.draw(s, r, 2);
       ny = 1.7 + ph_ + 0.3;
     }

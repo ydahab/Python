@@ -1,6 +1,6 @@
 const path = require("path");
 const { createDeck, prerenderIcons } = require("./lib");
-const lessons = require("./lessons");
+const lessons = [...require("./lessons"), ...require("./lessons_more")];
 
 (async () => {
   await prerenderIcons();
