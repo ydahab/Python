@@ -4,9 +4,10 @@ const lessons = [...require("./lessons"), ...require("./lessons_more")];
 
 (async () => {
   await prerenderIcons();
-  const out = path.join(__dirname, "decks");
+  const out = process.env.OUT_DIR || path.join(__dirname, "decks");
   require("fs").mkdirSync(out, { recursive: true });
   for (const L of lessons) {
+    if (process.env.ONLY && !L.file.startsWith(process.env.ONLY)) continue;
     const D = createDeck(L);
     L.build(D);
     await D.save(path.join(out, L.file));

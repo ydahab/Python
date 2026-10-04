@@ -21,3 +21,9 @@ npm install
 NODE_PATH=$PWD/node_modules node build.js
 ```
 `lib.js` holds the design system and slide types, `lessons.js` and `lessons_more.js` the content, `motion.js` the transitions and animations.
+
+## Narrated video (Lesson 1)
+`video/narration_lesson1.json` is the Egyptian-dialect narration script. `video/make_video.py` renders the slides, synthesizes the
+voice (Microsoft `ar-EG-SalmaNeural` through `edge-tts`), adds soft generated ambient music that ducks under the voice, and
+cross-fades the slides into an MP4. Run `python3 video/make_video.py` (or `--estimate` for a music-only preview).
+Needs `pip install edge-tts numpy`, ffmpeg and network access to `speech.platform.bing.com`.

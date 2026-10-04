@@ -1,3 +1,5 @@
 node_modules/
 *.pdf
 qa/
+video/build/
+video/*preview*.mp4

@@ -403,6 +403,7 @@ function createDeck(lesson) {
       tx(s, o, { x: x + 1.2, y, w: cw - 1.4, h: ch, fontSize: d.codeOptions ? 20 : 22, color: C.text1, fontFace: d.codeOptions ? CODE_FONT : THEME.bodyFontFace, valign: "middle", objectName: an(g, "opt_text") });
     });
     // answer reveal on click
+    if (process.env.NOANSWER) return s;
     const ci = d.answer, col = ci % 2, row = Math.floor(ci / 2);
     const ax = MX + col * (cw + 0.23), ay = 2.95 + row * (ch + 0.25);
     s.addShape(S.roundRect, { x: ax, y: ay, w: cw, h: ch, fill: { color: C.accent5, transparency: 100 }, line: { color: C.accent5, width: 5 }, rectRadius: 0.16, objectName: ak(1, "answer_ring") });
