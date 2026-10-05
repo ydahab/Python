@@ -43,7 +43,9 @@ async def synth(segments, voice, rate, folder):
     proxy = os.environ.get("HTTPS_PROXY")
     os.environ.setdefault("SSL_CERT_FILE", "/root/.ccr/ca-bundle.crt")
     for i, seg in enumerate(segments):
-        f = folder / f"v{i:02d}.mp3"
+        import hashlib
+        key = hashlib.md5(f"{voice}|{rate}|{seg['text']}".encode()).hexdigest()[:8]
+        f = folder / f"v{i:02d}_{key}.mp3"  # cache key includes voice + text
         if not f.exists():
             await edge_tts.Communicate(seg["text"], voice, rate=rate, proxy=proxy).save(str(f))
         seg["audio"] = f
