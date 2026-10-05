@@ -4,3 +4,4 @@ qa/
 video/build/
 video/*preview*.mp4
 video/*silent*.mp4
+video/*voiceover*.mp4
