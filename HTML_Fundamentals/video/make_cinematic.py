@@ -88,6 +88,7 @@ def main():
     ap.add_argument("--quiz-slide", type=int, default=13)
     ap.add_argument("--reveal", type=float, default=None, help="seconds into the quiz recording where the answer starts")
     ap.add_argument("--music", default=None, help="optional music file to use instead of the generated pad")
+    ap.add_argument("--reuse-clips", action="store_true", help="skip re-encoding per-slide clips that already exist")
     ap.add_argument("--music-volume", type=float, default=0.30)
     a = ap.parse_args()
 
@@ -145,6 +146,8 @@ def main():
         y0, y1 = (0.2, 0.8) if i % 3 == 0 else (0.8, 0.2) if i % 3 == 1 else (0.5, 0.5)
         f.append(f"[{prev}]crop=1920:1080:x='(iw-ow)*({x0}+({x1}-{x0})*t/{L:.3f})':y='(ih-oh)*({y0}+({y1}-{y0})*t/{L:.3f})'[c]")
         out = work / f"clip{s:02d}.mp4"
+        if a.reuse_clips and out.exists():
+            clips.append(out); continue
         cmd += ["-filter_complex", ";".join(f), "-map", "[c]", "-t", f"{L:.3f}", "-c:v", "libx264", "-preset", "veryfast", "-crf", "14", "-pix_fmt", "yuv420p", out]
         run(cmd)
         clips.append(out)
@@ -171,7 +174,7 @@ def main():
         kind = ENTER.get(i + 1, "fade")
         f.append(f"[{prev}][{i}:v]xfade=transition={kind}:duration={T}:offset={off[i]:.3f}[x{i}]")
         prev = f"x{i}"
-    f.append(f"[{prev}]vignette=PI/7,drawbox=x=0:y=ih-5:w='iw*t/{total:.2f}':h=5:color=0x14B8A6@0.85:t=fill,"
+    f.append(f"[{prev}]vignette=PI/2.8,drawbox=x=0:y=ih-5:w='iw*t/{total:.2f}':h=5:color=0x14B8A6@0.85:t=fill,"
              f"fade=t=in:st=0:d=1.2,fade=t=out:st={total - 2.0:.2f}:d=2.0,format=yuv420p[vout]")
     for i in range(n):
         ms = int(vs[i] * 1000)
