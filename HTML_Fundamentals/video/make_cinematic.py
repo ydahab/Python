@@ -174,7 +174,7 @@ def main():
         kind = ENTER.get(i + 1, "fade")
         f.append(f"[{prev}][{i}:v]xfade=transition={kind}:duration={T}:offset={off[i]:.3f}[x{i}]")
         prev = f"x{i}"
-    f.append(f"[{prev}]vignette=PI/2.8,drawbox=x=0:y=ih-5:w='iw*t/{total:.2f}':h=5:color=0x14B8A6@0.85:t=fill,"
+    f.append(f"[{prev}]vignette=PI/18,drawbox=x=0:y=ih-5:w='iw*t/{total:.2f}':h=5:color=0x14B8A6@0.85:t=fill,"
              f"fade=t=in:st=0:d=1.2,fade=t=out:st={total - 2.0:.2f}:d=2.0,format=yuv420p[vout]")
     for i in range(n):
         ms = int(vs[i] * 1000)
