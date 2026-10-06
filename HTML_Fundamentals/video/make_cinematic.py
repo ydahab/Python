@@ -185,9 +185,9 @@ def main():
     f.append(f"[{mi}:a]aformat=channel_layouts=stereo,volume={a.music_volume},afade=t=in:st=0:d=3[mus]")
     f.append("[mus][vo2]sidechaincompress=threshold=0.012:ratio=8:attack=30:release=900[duck]")
     f.append(f"[vo1][duck]amix=inputs=2:normalize=0:duration=first,atrim=0:{total:.2f},afade=t=out:st={total - 2.5:.2f}:d=2.5,"
-             f"loudnorm=I=-16:TP=-1.5:LRA=9[aout]")
+             f"loudnorm=I=-16:TP=-1.5:LRA=9,aresample=48000[aout]")
     cmd += ["-filter_complex", ";".join(f), "-map", "[vout]", "-map", "[aout]", "-t", f"{total:.2f}",
-            "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-r", str(FPS), "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", a.out]
+            "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-r", str(FPS), "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-movflags", "+faststart", a.out]
     run(cmd)
     print(f"wrote {a.out}  ({total:.0f}s = {total / 60:.1f} min)")
     json.dump({"offsets": off, "voice_start": vs, "durations": adur, "reveal": reveal}, open(work / "timeline.json", "w"), indent=1)
