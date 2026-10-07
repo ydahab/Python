@@ -33,6 +33,8 @@ ap.add_argument("--main", default=str(ROOT / "video" / "Lesson1_Meet_HTML_cinema
 ap.add_argument("--out", default=str(ROOT / "video" / "Lesson1_Meet_HTML_final.mp4"))
 ap.add_argument("--music-volume", type=float, default=0.30)
 ap.add_argument("--crf", default="19")
+ap.add_argument("--no-music", action="store_true", help="voice only; with --video-from the picture is reused without re-encoding")
+ap.add_argument("--video-from", default=None, help="existing finished video whose picture is reused (with --no-music)")
 a = ap.parse_args()
 
 tl = json.load(open(CINE / "timeline.json"))
@@ -41,6 +43,27 @@ n = len(voices)
 d_in, d_main, d_out = dur(a.intro), dur(a.main), dur(a.closing)
 total = d_in + d_main + d_out
 print(f"intro {d_in:.2f}s + lesson {d_main:.2f}s + closing {d_out:.2f}s = {total:.1f}s")
+
+if a.no_music:
+    # voice-only audio, then mux with the picture of an already finished video
+    cmd = ["ffmpeg", "-y", "-v", "error"]
+    for v in voices:
+        cmd += ["-i", v]
+    f = []
+    for i in range(n):
+        ms = int((tl["voice_start"][i] + d_in) * 1000)
+        f.append(f"[{i}:a]highpass=f=70,acompressor=threshold=0.06:ratio=2.5:attack=15:release=250:makeup=2,"
+                 f"aresample=48000,aformat=channel_layouts=stereo,adelay={ms}|{ms}[d{i}]")
+    f.append("".join(f"[d{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0:duration=longest,apad=whole_dur={total:.2f},"
+             f"atrim=0:{total:.2f},afade=t=out:st={total - 1.5:.2f}:d=1.5,loudnorm=I=-16:TP=-1.5:LRA=9,aresample=48000[aout]")
+    wav = CINE / "voice_only.wav"
+    run(cmd + ["-filter_complex", ";".join(f), "-map", "[aout]", "-t", f"{total:.2f}", wav])
+    if not a.video_from:
+        sys.exit("--no-music needs --video-from <finished video>")
+    run(["ffmpeg", "-y", "-v", "error", "-i", a.video_from, "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
+         "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-t", f"{total:.2f}", "-tag:v", "avc1", "-movflags", "+faststart", a.out])
+    print("wrote", a.out)
+    sys.exit(0)
 
 music = CINE / "music_full.wav"
 run(["python3", ROOT / "video" / "make_music.py", f"{total + 3:.1f}", music])
