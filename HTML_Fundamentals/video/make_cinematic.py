@@ -18,8 +18,16 @@ FADE = 0.35  # build-step cross-fade (s)
 FPS = 30
 
 # transition used when entering each slide number (cinematic variety; dips to black for section/outro)
-ENTER = {2: "fadewhite", 3: "smoothleft", 4: "dissolve", 5: "circleopen", 6: "smoothleft", 7: "fadeblack", 8: "smoothup",
-         9: "fade", 10: "smoothleft", 11: "circleopen", 12: "dissolve", 13: "horzopen", 14: "smoothleft", 15: "fadeblack"}
+CYCLE = ["smoothleft", "fade", "circleopen", "dissolve", "smoothup", "smoothleft", "horzopen", "fade"]
+
+
+def trans_for(slide, dips):
+    """Transition used when entering `slide` (1-based): dips to black for dividers and the recap."""
+    if slide == 2:
+        return "fadewhite"
+    if slide in dips:
+        return "fadeblack"
+    return CYCLE[(slide - 3) % len(CYCLE)]
 
 
 def run(cmd, **kw):
@@ -85,12 +93,25 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pptx", required=True, help="deck with a recording on every slide")
     ap.add_argument("--out", default=str(ROOT / "video" / "Lesson1_Meet_HTML_cinematic.mp4"))
-    ap.add_argument("--quiz-slide", type=int, default=13)
-    ap.add_argument("--reveal", type=float, default=None, help="seconds into the quiz recording where the answer starts")
+    ap.add_argument("--build-dir", default=str(ROOT / "video" / "build"), help="folder holding steps/ (frames) and cine/ (work files)")
+    ap.add_argument("--quiz-slides", default="13", help="comma list of quiz slide numbers (answer revealed mid-slide); '' for none")
+    ap.add_argument("--dips", default="7,15", help="comma list of slides entered through a dip to black (dividers, recap)")
+    ap.add_argument("--no-music", action="store_true", help="write a picture-only main video (audio is mixed later)")
+    ap.add_argument("--reveal", default=None, help="override reveal seconds: one number, or slide:seconds pairs like 3:12.5,12:20")
     ap.add_argument("--music", default=None, help="optional music file to use instead of the generated pad")
     ap.add_argument("--reuse-clips", action="store_true", help="skip re-encoding per-slide clips that already exist")
     ap.add_argument("--music-volume", type=float, default=0.30)
     a = ap.parse_args()
+    global B
+    B = Path(a.build_dir)
+    quiz = [int(x) for x in a.quiz_slides.split(",") if x.strip()]
+    dips = {int(x) for x in a.dips.split(",") if x.strip()}
+    manual = {}
+    if a.reveal:
+        if ":" in a.reveal:
+            manual = {int(k): float(v) for k, v in (x.split(":") for x in a.reveal.split(","))}
+        elif len(quiz) == 1:
+            manual = {quiz[0]: float(a.reveal)}
 
     work = B / "cine"; work.mkdir(parents=True, exist_ok=True)
     audio = extract_audio(a.pptx, work / "audio")
@@ -107,10 +128,10 @@ def main():
     total = vs[-1] + adur[-1] + 2.8
     length = [(off[i + 1] + T if i + 1 < n else total) - off[i] for i in range(n)]
 
-    reveal = None
-    if a.quiz_slide:
-        reveal = a.reveal if a.reveal is not None else find_reveal(audio[a.quiz_slide - 1])
-        print(f"quiz answer revealed at {reveal:.1f}s of the recording (override with --reveal)")
+    reveals = {}
+    for q in quiz:
+        reveals[q] = manual.get(q, find_reveal(audio[q - 1]))
+        print(f"quiz slide {q}: answer revealed at {reveals[q]:.1f}s of the recording (override with --reveal {q}:seconds)")
 
     # ---- per-slide clips: build-up + camera drift
     clips = []
@@ -120,9 +141,9 @@ def main():
         base = 1.7 if i == 0 else T + 0.2
         events = [(0.0, frames[0])] + [(base + 0.5 * j, p) for j, p in enumerate(frames[1:])]
         final = B / "steps" / "final_noans" / f"s-{s:02d}.png"
-        if s == a.quiz_slide:
+        if s in reveals:
             events.append((events[-1][0] + 0.5, final))
-            events.append((vs[i] - off[i] + reveal, B / "steps" / "final_full" / f"s-{s:02d}.png"))
+            events.append((vs[i] - off[i] + reveals[s], B / "steps" / "final_full" / f"s-{s:02d}.png"))
         else:
             events.append((events[-1][0] + 0.5, B / "steps" / "final_full" / f"s-{s:02d}.png"))
         # drop duplicate consecutive frames
@@ -154,7 +175,9 @@ def main():
         print("clip", s, f"{L:.1f}s", f"{len(ev)} frames")
 
     # ---- music
-    if a.music:
+    if a.no_music:
+        music = None
+    elif a.music:
         music = Path(a.music)
     else:
         music = work / "music.wav"
@@ -164,33 +187,38 @@ def main():
     cmd = ["ffmpeg", "-y", "-v", "error"]
     for c in clips:
         cmd += ["-i", c]
-    for f_ in audio:
-        cmd += ["-i", f_]
-    cmd += ["-stream_loop", "-1", "-i", music]
+    if not a.no_music:
+        for f_ in audio:
+            cmd += ["-i", f_]
+        cmd += ["-stream_loop", "-1", "-i", music]
     mi = 2 * n
     f = []
     prev = "0:v"
     for i in range(1, n):
-        kind = ENTER.get(i + 1, "fade")
+        kind = trans_for(i + 1, dips)
         f.append(f"[{prev}][{i}:v]xfade=transition={kind}:duration={T}:offset={off[i]:.3f}[x{i}]")
         prev = f"x{i}"
     f.append(f"[{prev}]vignette=PI/18,drawbox=x=0:y=ih-5:w='iw*t/{total:.2f}':h=5:color=0x14B8A6@0.85:t=fill,"
              f"fade=t=in:st=0:d=1.2,fade=t=out:st={total - 2.0:.2f}:d=2.0,format=yuv420p[vout]")
-    for i in range(n):
+    for i in range(0 if a.no_music else n):
         ms = int(vs[i] * 1000)
         f.append(f"[{n + i}:a]highpass=f=70,acompressor=threshold=0.06:ratio=2.5:attack=15:release=250:makeup=2,"
                  f"aresample=44100,aformat=channel_layouts=stereo,adelay={ms}|{ms}[d{i}]")
-    f.append("".join(f"[d{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0:duration=longest[voice]")
-    f.append("[voice]asplit=2[vo1][vo2]")
-    f.append(f"[{mi}:a]aformat=channel_layouts=stereo,volume={a.music_volume},afade=t=in:st=0:d=3[mus]")
-    f.append("[mus][vo2]sidechaincompress=threshold=0.012:ratio=8:attack=30:release=900[duck]")
-    f.append(f"[vo1][duck]amix=inputs=2:normalize=0:duration=first,atrim=0:{total:.2f},afade=t=out:st={total - 2.5:.2f}:d=2.5,"
-             f"loudnorm=I=-16:TP=-1.5:LRA=9,aresample=48000[aout]")
-    cmd += ["-filter_complex", ";".join(f), "-map", "[vout]", "-map", "[aout]", "-t", f"{total:.2f}",
-            "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-r", str(FPS), "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-movflags", "+faststart", a.out]
+    if a.no_music:
+        cmd += ["-filter_complex", ";".join(f), "-map", "[vout]", "-t", f"{total:.2f}", "-an",
+                "-c:v", "libx264", "-preset", "veryfast", "-crf", "15", "-r", str(FPS), "-movflags", "+faststart", a.out]
+    else:
+        f.append("".join(f"[d{i}]" for i in range(n)) + f"amix=inputs={n}:normalize=0:duration=longest[voice]")
+        f.append("[voice]asplit=2[vo1][vo2]")
+        f.append(f"[{mi}:a]aformat=channel_layouts=stereo,volume={a.music_volume},afade=t=in:st=0:d=3[mus]")
+        f.append("[mus][vo2]sidechaincompress=threshold=0.012:ratio=8:attack=30:release=900[duck]")
+        f.append(f"[vo1][duck]amix=inputs=2:normalize=0:duration=first,atrim=0:{total:.2f},afade=t=out:st={total - 2.5:.2f}:d=2.5,"
+                 f"loudnorm=I=-16:TP=-1.5:LRA=9,aresample=48000[aout]")
+        cmd += ["-filter_complex", ";".join(f), "-map", "[vout]", "-map", "[aout]", "-t", f"{total:.2f}",
+                "-c:v", "libx264", "-preset", "medium", "-crf", "19", "-r", str(FPS), "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-movflags", "+faststart", a.out]
     run(cmd)
     print(f"wrote {a.out}  ({total:.0f}s = {total / 60:.1f} min)")
-    json.dump({"offsets": off, "voice_start": vs, "durations": adur, "reveal": reveal}, open(work / "timeline.json", "w"), indent=1)
+    json.dump({"offsets": off, "voice_start": vs, "durations": adur, "reveal": reveals}, open(work / "timeline.json", "w"), indent=1)
 
 
 if __name__ == "__main__":

@@ -12,7 +12,6 @@ import argparse, json, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CINE = ROOT / "video" / "build" / "cine"
 
 
 def run(cmd):
@@ -27,6 +26,7 @@ def dur(p):
 
 
 ap = argparse.ArgumentParser()
+ap.add_argument("--build-dir", default=str(ROOT / "video" / "build"))
 ap.add_argument("--intro", required=True)
 ap.add_argument("--closing", required=True)
 ap.add_argument("--main", default=str(ROOT / "video" / "Lesson1_Meet_HTML_cinematic.mp4"))
@@ -37,6 +37,7 @@ ap.add_argument("--no-music", action="store_true", help="voice only; with --vide
 ap.add_argument("--video-from", default=None, help="existing finished video whose picture is reused (with --no-music)")
 a = ap.parse_args()
 
+CINE = Path(a.build_dir) / "cine"
 tl = json.load(open(CINE / "timeline.json"))
 voices = sorted((CINE / "audio").glob("slide*_media*.mp3"))
 n = len(voices)
@@ -58,10 +59,16 @@ if a.no_music:
              f"atrim=0:{total:.2f},afade=t=out:st={total - 1.5:.2f}:d=1.5,loudnorm=I=-16:TP=-1.5:LRA=9,aresample=48000[aout]")
     wav = CINE / "voice_only.wav"
     run(cmd + ["-filter_complex", ";".join(f), "-map", "[aout]", "-t", f"{total:.2f}", wav])
-    if not a.video_from:
-        sys.exit("--no-music needs --video-from <finished video>")
-    run(["ffmpeg", "-y", "-v", "error", "-i", a.video_from, "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
-         "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-t", f"{total:.2f}", "-tag:v", "avc1", "-movflags", "+faststart", a.out])
+    if a.video_from:
+        run(["ffmpeg", "-y", "-v", "error", "-i", a.video_from, "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
+             "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-t", f"{total:.2f}", "-tag:v", "avc1", "-movflags", "+faststart", a.out])
+    else:
+        fmt = "scale=1920:1080:flags=lanczos,setsar=1,fps=30,format=yuv420p"
+        g = [f"[0:v]{fmt},fade=t=out:st={d_in - 0.7:.2f}:d=0.7[v0]", f"[1:v]{fmt}[v1]",
+             f"[2:v]{fmt},fade=t=in:st=0:d=0.8,fade=t=out:st={d_out - 1.0:.2f}:d=1.0[v2]", "[v0][v1][v2]concat=n=3:v=1:a=0[vout]"]
+        run(["ffmpeg", "-y", "-v", "error", "-i", a.intro, "-i", a.main, "-i", a.closing, "-i", wav, "-filter_complex", ";".join(g),
+             "-map", "[vout]", "-map", "3:a", "-t", f"{total:.2f}", "-c:v", "libx264", "-preset", "fast", "-crf", a.crf, "-r", "30",
+             "-c:a", "aac", "-ar", "48000", "-b:a", "192k", "-tag:v", "avc1", "-movflags", "+faststart", a.out])
     print("wrote", a.out)
     sys.exit(0)
 
