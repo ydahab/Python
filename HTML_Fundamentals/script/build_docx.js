@@ -59,7 +59,7 @@ function convert(file) {
     numbering: { config: [{ reference: "bul", levels: [{ level: 0, format: LevelFormat.BULLET, text: "•", alignment: AlignmentType.START, style: { paragraph: { indent: { left: 540, hanging: 270 } } } }] }] },
     sections: [{
       properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 1134, bottom: 1134, left: 1134, right: 1134 } } },
-      footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "HTML Fundamentals  ·  ", font: FONT, size: 18, color: TEAL }), new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 18, color: TEAL })] })] }) },
+      footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: (process.env.DOC_FOOTER || "HTML Fundamentals") + "  ·  ", font: FONT, size: 18, color: TEAL }), new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 18, color: TEAL })] })] }) },
       children: kids,
     }],
   });
@@ -68,6 +68,8 @@ function convert(file) {
 }
 
 (async () => {
-  const dir = __dirname;
-  for (const f of fs.readdirSync(dir).filter((f) => /^Lesson\d_script_ar\.md$/.test(f)).sort()) await convert(path.join(dir, f));
+  // usage: node build_docx.js [file.md ...]   (no arguments: every Lesson*_script_ar.md in this folder)
+  const args = process.argv.slice(2);
+  const files = args.length ? args.map((a) => path.resolve(a)) : fs.readdirSync(__dirname).filter((f) => /^Lesson\d_script_ar\.md$/.test(f)).sort().map((f) => path.join(__dirname, f));
+  for (const f of files) await convert(f);
 })();
