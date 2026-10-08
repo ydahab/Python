@@ -97,7 +97,7 @@ def main():
     ap.add_argument("--quiz-slides", default="13", help="comma list of quiz slide numbers (answer revealed mid-slide); '' for none")
     ap.add_argument("--dips", default="7,15", help="comma list of slides entered through a dip to black (dividers, recap)")
     ap.add_argument("--no-music", action="store_true", help="write a picture-only main video (audio is mixed later)")
-    ap.add_argument("--reveal", default=None, help="override reveal seconds: one number, or slide:seconds pairs like 3:12.5,12:20")
+    ap.add_argument("--reveal", default=None, help="reveal seconds: one number, or slide:seconds pairs like 3:12.5,12:20; several answers on one slide: 23:11.5/27.6/38.7")
     ap.add_argument("--music", default=None, help="optional music file to use instead of the generated pad")
     ap.add_argument("--reuse-clips", action="store_true", help="skip re-encoding per-slide clips that already exist")
     ap.add_argument("--music-volume", type=float, default=0.30)
@@ -109,9 +109,9 @@ def main():
     manual = {}
     if a.reveal:
         if ":" in a.reveal:
-            manual = {int(k): float(v) for k, v in (x.split(":") for x in a.reveal.split(","))}
+            manual = {int(k): [float(t) for t in v.split("/")] for k, v in (x.split(":") for x in a.reveal.split(","))}
         elif len(quiz) == 1:
-            manual = {quiz[0]: float(a.reveal)}
+            manual = {quiz[0]: [float(a.reveal)]}
 
     work = B / "cine"; work.mkdir(parents=True, exist_ok=True)
     audio = extract_audio(a.pptx, work / "audio")
@@ -130,8 +130,8 @@ def main():
 
     reveals = {}
     for q in quiz:
-        reveals[q] = manual.get(q, find_reveal(audio[q - 1]))
-        print(f"quiz slide {q}: answer revealed at {reveals[q]:.1f}s of the recording (override with --reveal {q}:seconds)")
+        reveals[q] = manual.get(q, [find_reveal(audio[q - 1])])
+        print(f"quiz slide {q}: answers revealed at {', '.join(f'{t:.1f}' for t in reveals[q])}s of the recording (override with --reveal {q}:seconds)")
 
     # ---- per-slide clips: build-up + camera drift
     clips = []
@@ -143,7 +143,9 @@ def main():
         final = B / "steps" / "final_noans" / f"s-{s:02d}.png"
         if s in reveals:
             events.append((events[-1][0] + 0.5, final))
-            events.append((vs[i] - off[i] + reveals[s], B / "steps" / "final_full" / f"s-{s:02d}.png"))
+            for j, tj in enumerate(reveals[s]):
+                last = j == len(reveals[s]) - 1
+                events.append((vs[i] - off[i] + tj, B / "steps" / ("final_full" if last else f"final_k{j + 1}") / f"s-{s:02d}.png"))
         else:
             events.append((events[-1][0] + 0.5, B / "steps" / "final_full" / f"s-{s:02d}.png"))
         # drop duplicate consecutive frames

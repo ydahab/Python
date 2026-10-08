@@ -19,13 +19,17 @@ def run(cmd, **kw):
 
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--lesson", required=True, help="deck file prefix, e.g. Lesson2")
+ap.add_argument("--lesson", default=None, help="HTML lesson deck file prefix, e.g. Lesson2 (built with build.js)")
+ap.add_argument("--deck", default=None, help="use this finished .pptx instead of building a lesson deck")
 ap.add_argument("--build-dir", required=True)
 a = ap.parse_args()
 B = Path(a.build_dir).resolve(); (B / "src").mkdir(parents=True, exist_ok=True)
-env = dict(os.environ, NODE_PATH=str(ROOT / "node_modules"), ONLY=a.lesson, OUT_DIR=str(B / "src"))
-run(["node", ROOT / "build.js"], env=env, cwd=ROOT)
-deck = next((B / "src").glob(f"{a.lesson}*.pptx"))
+env = dict(os.environ, NODE_PATH=str(ROOT / "node_modules"), ONLY=a.lesson or "", OUT_DIR=str(B / "src"))
+if a.deck:
+    deck = Path(a.deck).resolve()
+else:
+    run(["node", ROOT / "build.js"], env=env, cwd=ROOT)
+    deck = next((B / "src").glob(f"{a.lesson}*.pptx"))
 steps = B / "steps"
 run(["node", ROOT / "video" / "make_steps.js", deck, steps], env=env)
 pptx = sorted(steps.glob("*.pptx"))
