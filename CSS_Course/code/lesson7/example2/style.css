@@ -1,0 +1,11 @@
+.ball {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ff4f8b;
+  animation: bounce 1s infinite alternate;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(120px); }
+}

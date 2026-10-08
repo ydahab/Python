@@ -1,0 +1,11 @@
+body { background: #eef2ff; }
+.card {
+  font-family: Arial;
+  background: white;
+  border: 2px solid #2965f1;
+  border-radius: 12px;
+  padding: 16px;
+  width: 260px;
+}
+.badge { background: gold; padding: 2px 8px; }
+#title { color: #2965f1; }

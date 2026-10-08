@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  background: #eef2ff;
+  font-family: Arial, sans-serif;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+.stat {
+  background: white;
+  border: 1px solid #c7d2fe;
+  border-radius: 12px;
+  padding: 18px;
+}
+.big {
+  grid-column: span 2;
+  background: #2965f1;
+  color: white;
+}
+.stat strong {
+  display: block;
+  font-size: 2rem;
+}
+.stat span {
+  color: #64748b;
+}
+.big span {
+  color: #dbe4ff;
+}

@@ -1,0 +1,31 @@
+/* Lesson 4 activity: team page */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.nav {
+  /* flex, space-between, centred, dark background, padding */
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.links {
+  /* flex and gap */
+}
+
+.team {
+  /* flex, gap, wrap, padding */
+}
+
+.member {
+  /* flex: 1 1 180px, column layout, centred items */
+}
+
+.avatar {
+  /* bonus: coloured circle */
+}

@@ -1,0 +1,27 @@
+/* Lesson 7 challenge: 3D flip card */
+
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+}
+
+.face {
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+}
+
+.front {
+  background: #2965f1;
+}
+
+.back {
+  background: #ff4f8b;
+}
+
+/* .scene, .card and the 3D rules go here */

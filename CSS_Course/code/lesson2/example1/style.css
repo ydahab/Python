@@ -1,0 +1,10 @@
+.box {
+  color: white;
+  padding: 14px;
+  font-family: Arial, sans-serif;
+  margin-bottom: 8px;
+}
+.a { background: royalblue; }
+.b { background: #2965f1; }
+.c { background: rgb(41, 101, 241); }
+.d { background: hsl(222, 88%, 55%); }

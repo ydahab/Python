@@ -1,0 +1,29 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+}
+.paper > * {
+  background: #e0e7ff;
+  padding: 16px;
+  border-radius: 8px;
+}
+.paper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "lead lead side"
+    "a    b    side"
+    "foot foot foot";
+  gap: 12px;
+  min-height: 260px;
+}
+.lead {
+  grid-area: lead;
+  font-size: 1.4rem;
+  border-top: 6px solid #ff4f8b;
+}
+.side { grid-area: side; }
+.a { grid-area: a; }
+.b { grid-area: b; }
+.foot { grid-area: foot; }

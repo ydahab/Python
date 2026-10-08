@@ -1,0 +1,17 @@
+/* Lesson 5 challenge: newspaper layout */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+}
+
+.paper > * {
+  background: #e0e7ff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.paper {
+  /* grid, areas, gap */
+}

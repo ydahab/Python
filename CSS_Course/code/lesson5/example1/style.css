@@ -1,0 +1,12 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.gallery div {
+  background: #2965f1;
+  color: white;
+  padding: 24px;
+  text-align: center;
+  font-family: Arial;
+}

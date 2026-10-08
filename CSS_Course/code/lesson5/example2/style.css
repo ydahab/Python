@@ -1,0 +1,14 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  font-family: Arial;
+}
+.grid div {
+  background: #8b5cf6;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+.wide { grid-column: span 2; }
+.tall { grid-row: span 2; }

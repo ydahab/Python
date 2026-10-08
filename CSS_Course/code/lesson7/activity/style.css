@@ -1,0 +1,31 @@
+/* Lesson 7 activity: animated hero */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.hero {
+  text-align: center;
+  padding: 50px 20px;
+  background: linear-gradient(135deg, #2965f1, #8b5cf6);
+  color: white;
+}
+
+.cta {
+  display: inline-block;
+  background: #ffc83d;
+  color: #10132b;
+  padding: 12px 26px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* 1. @keyframes rise */
+
+/* 2-3. animation and delays */
+
+/* 4. hover transition */
+
+/* 5. prefers-reduced-motion */

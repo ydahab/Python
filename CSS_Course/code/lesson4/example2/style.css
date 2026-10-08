@@ -1,0 +1,12 @@
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-family: Arial;
+}
+.card {
+  flex: 1 1 150px;
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 22px;
+}

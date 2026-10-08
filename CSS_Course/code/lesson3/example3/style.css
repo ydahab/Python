@@ -1,0 +1,12 @@
+.page {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 16px;
+  border: 2px solid #2965f1;
+  font-family: Arial;
+}
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: gold;
+}

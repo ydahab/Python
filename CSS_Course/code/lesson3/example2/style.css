@@ -1,0 +1,10 @@
+.box {
+  width: 200px;
+  padding: 20px;
+  border: 5px solid #ff4f8b;
+  background: #fff1f6;
+  margin-bottom: 12px;
+  font-family: Arial, sans-serif;
+}
+.content-box { box-sizing: content-box; }
+.border-box { box-sizing: border-box; }
