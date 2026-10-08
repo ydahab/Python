@@ -97,6 +97,7 @@ def main():
     ap.add_argument("--quiz-slides", default="13", help="comma list of quiz slide numbers (answer revealed mid-slide); '' for none")
     ap.add_argument("--dips", default="7,15", help="comma list of slides entered through a dip to black (dividers, recap)")
     ap.add_argument("--no-music", action="store_true", help="write a picture-only main video (audio is mixed later)")
+    ap.add_argument("--rtl", action="store_true", help="right-to-left deck (Arabic): mirror transition and camera-drift directions")
     ap.add_argument("--reveal", default=None, help="reveal seconds: one number, or slide:seconds pairs like 3:12.5,12:20; several answers on one slide: 23:11.5/27.6/38.7")
     ap.add_argument("--music", default=None, help="optional music file to use instead of the generated pad")
     ap.add_argument("--reuse-clips", action="store_true", help="skip re-encoding per-slide clips that already exist")
@@ -166,6 +167,8 @@ def main():
             prev = f"g{j}"
         # slow camera drift (direction alternates per slide)
         x0, x1 = (0.15, 0.85) if i % 2 == 0 else (0.85, 0.15)
+        if a.rtl:
+            x0, x1 = x1, x0
         y0, y1 = (0.2, 0.8) if i % 3 == 0 else (0.8, 0.2) if i % 3 == 1 else (0.5, 0.5)
         f.append(f"[{prev}]crop=1920:1080:x='(iw-ow)*({x0}+({x1}-{x0})*t/{L:.3f})':y='(ih-oh)*({y0}+({y1}-{y0})*t/{L:.3f})'[c]")
         out = work / f"clip{s:02d}.mp4"
@@ -198,6 +201,8 @@ def main():
     prev = "0:v"
     for i in range(1, n):
         kind = trans_for(i + 1, dips)
+        if a.rtl:
+            kind = kind.replace("left", "\0").replace("right", "left").replace("\0", "right")
         f.append(f"[{prev}][{i}:v]xfade=transition={kind}:duration={T}:offset={off[i]:.3f}[x{i}]")
         prev = f"x{i}"
     f.append(f"[{prev}]vignette=PI/18,drawbox=x=0:y=ih-5:w='iw*t/{total:.2f}':h=5:color=0x14B8A6@0.85:t=fill,"
