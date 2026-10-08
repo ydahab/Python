@@ -28,9 +28,17 @@ module.exports = {
     { type: "cards", title: "Why shrinking is getting harder", cards: [
       { icon: "FaAtom", head: "Atoms are the limit", body: "A silicon atom is about 0.2 nm wide. The tiniest parts of a modern transistor are only tens of atoms across." },
       { icon: "FaFire", head: "Heat", body: "Billions of switches packed into a thumbnail-sized chip create intense heat that is hard to remove." },
-      { icon: "FaBolt", head: "Quantum leaks", body: "At this scale electrons can 'tunnel' through thin barriers, so switches leak current and become unreliable." }],
+      { icon: "FaBolt", head: "Quantum leaks", body: "At this scale electrons can 'tunnel' through thin barriers (see next slide), so switches leak current." }],
       note: "Engineers still find tricks (3D stacking, chiplets, new materials). Quantum computing is a different path: not a faster chip, but a different kind of computer.",
       notes: "Be clear that classical chips are not dead. The idea of quantum computing is to solve some problems differently, not to speed up everything." },
+
+    { type: "tunnel", title: "Quantum tunnelling: electrons slipping through", panels: [
+      { head: "A thick barrier", caption: "The electron wave fades away. It almost never crosses." },
+      { head: "A barrier a few atoms thick", caption: "Some of the wave leaks through. The electron can appear on the other side." }],
+      cards: [
+        { icon: "FaMicrochip", head: "What it means inside a transistor", body: "The 'barrier' is a thin insulating layer. When it is only a few atoms thick, some electrons leak through even when the switch is OFF. That wastes power and makes heat." },
+        { icon: "FaTools", head: "What engineers did", body: "New insulating materials (high-k) and 3D transistor shapes (FinFET, gate-all-around) reduced the leaks. But every new shrink makes the problem harder again." }],
+      notes: "Electrons behave like waves of probability. A wave does not stop abruptly at a wall: a small part continues inside, and if the wall is thin enough it comes out the other side. The same quantum rules that cause these leaks also make quantum computers possible." },
 
     { type: "divider", num: 2, title: "What is quantum computing?", sub: "Computing with the rules of the very small", notes: "Part 2: the core ideas. Keep analogies simple and be honest about their limits." },
     { type: "bitqubit", title: "Bit vs. qubit", panels: [

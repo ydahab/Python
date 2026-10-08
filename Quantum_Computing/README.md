@@ -2,8 +2,8 @@
 
 | Deck | Language | Slides |
 |------|----------|--------|
-| `decks/Quantum_Computing_EN.pptx` | English (left-to-right) | 24 |
-| `decks/Quantum_Computing_AR.pptx` | Arabic (fully mirrored right-to-left) | 24 |
+| `decks/Quantum_Computing_EN.pptx` | English (left-to-right) | 25 |
+| `decks/Quantum_Computing_AR.pptx` | Arabic (fully mirrored right-to-left) | 25 |
 
 Parts: why we need it (the limits of Moore's law), what it is (qubits, superposition, entanglement, interference),
 applications and benefits, and quantum in the hardware industry. Each deck has transitions, entrance animations,

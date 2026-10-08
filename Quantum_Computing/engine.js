@@ -249,6 +249,45 @@ function createDeck(L) {
     return s;
   };
 
+  // quantum tunnelling: electron wave meets a thick vs a thin barrier
+  T.tunnel = (d) => {
+    const s = newSlide("CONTENT", "push", d.notes);
+    title(s, d.title);
+    const pw = 5.95, ph_ = 2.55;
+    d.panels.forEach((p, k) => {
+      const px = MX + k * (pw + 0.23), py = 1.6, g = k + 1;
+      shape(s, S.roundRect, { x: px, y: py, w: pw, h: ph_, fill: { color: k ? C.text2 : C.background2 }, rectRadius: 0.2, objectName: an(g, "card") });
+      const ink = k ? C.background1 : C.text1;
+      tx(s, p.head, { x: px + 0.35, y: py + 0.1, w: pw - 0.7, h: 0.42, fontSize: 19, bold: true, color: k ? C.accent4 : C.text2, valign: "middle", objectName: an(g, "head") });
+      const bw = k ? 0.35 : 1.5, bx = k ? 2.85 : 2.2; // barrier x (inside panel) and width
+      shape(s, S.rect, { x: px + bx, y: py + 0.62, w: bw, h: 1.3, fill: { color: C.accent3, transparency: 25 }, line: { color: C.accent3, width: 1 }, objectName: an(g, "barrier") });
+      // wave points (LTR inside a box of width bw_total), mirrored for RTL
+      const x0 = 0.55, xe = pw - 0.35, wl = 0.5, A = 0.42, cy = 0.65, boxW = xe - x0, ampOut = k ? 0.17 : 0.025;
+      const pts = [];
+      const N = 160;
+      for (let i = 0; i <= N; i++) {
+        const xx = x0 + (boxW * i) / N, rel = xx;
+        let amp;
+        if (rel < bx) amp = A;
+        else if (rel < bx + bw) amp = A * Math.exp(-2.2 * (rel - bx) / (k ? 0.35 : 1.5) * (k ? 0.9 : 1.6));
+        else amp = ampOut;
+        const yy = cy - amp * Math.sin((2 * Math.PI * (xx - x0)) / wl);
+        pts.push({ x: rtl ? boxW - (xx - x0) : xx - x0, y: yy, ...(i === 0 ? { moveTo: true } : {}) });
+      }
+      shape(s, S.custGeom, { x: px + x0, y: py + 0.62, w: boxW, h: 1.3, points: pts, fill: { color: C.accent1, transparency: 100 }, line: { color: C.accent1, width: 3 }, objectName: an(g, "ico_wave") });
+      shape(s, S.ellipse, { x: px + 0.2, y: py + 0.62 + cy - 0.14, w: 0.28, h: 0.28, fill: { color: C.accent4 }, objectName: an(g, "ico_e") });
+      tx(s, p.caption, { x: px + 0.35, y: py + 1.98, w: pw - 0.7, h: 0.5, fontSize: 16, bold: true, color: ink, valign: "middle", objectName: an(g, "cap") });
+    });
+    d.cards.forEach((c, i) => {
+      const x = MX + i * (pw + 0.23), g = 3 + i;
+      shape(s, S.roundRect, { x, y: 4.35, w: pw, h: 2.35, fill: { color: i ? C.accent4 : C.background2 }, rectRadius: 0.2, objectName: an(g, "card") });
+      iconCircle(s, c.icon, x + 0.35, 4.6, 0.8, i ? C.text1 : pal(i), g, i ? HEX.accent4 : HEX.dk1);
+      tx(s, c.head, { x: x + 1.4, y: 4.55, w: pw - 1.75, h: 0.9, fontSize: 21, bold: true, color: C.text1, valign: "middle", objectName: an(g, "head") });
+      tx(s, c.body, { x: x + 0.35, y: 5.5, w: pw - 0.7, h: 1.1, fontSize: 15, color: C.text1, valign: "top", objectName: an(g, "body") });
+    });
+    return s;
+  };
+
   T.stats = (d) => {
     const s = newSlide("DARK", "vortex", d.notes);
     title(s, d.title);
