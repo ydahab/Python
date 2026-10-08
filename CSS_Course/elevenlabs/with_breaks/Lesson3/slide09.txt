@@ -1,0 +1,1 @@
+الأول: padding بعشرين من غير وحدة. الرقم لازم له وحدة، الصفر بس يتكتب من غير وحدة. <break time="0.9s" /> التاني: margin صفر وauto على span. ده مش هيوسّط، لأن الـ span inline. الصح: display بلوك، وعرض، وبعدها margin auto. <break time="0.9s" /> والتالت: عرض مية في المية مع padding. مع content-box بيطلع أعرض من الشاشة، ويظهر شريط تمرير أفقي. الحل: border-box.
