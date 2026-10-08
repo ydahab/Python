@@ -10,3 +10,4 @@ video/*cinematic*.mp4
 video/*final*.mp4
 video/*nomusic*.mp4
 __pycache__/
+video/Quantum*.mp4
