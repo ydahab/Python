@@ -15,6 +15,7 @@ const p14 = (inner, dur = 1100) =>
 const TRANSITIONS = {
   fade: () => `<p:transition spd="med"><p:fade/></p:transition>`,
   push: () => `<p:transition spd="med"><p:push dir="l"/></p:transition>`,
+  pushr: () => `<p:transition spd="med"><p:push dir="r"/></p:transition>`,
   ripple: () => p14(`<p14:ripple/>`, 1600),
   prism: () => p14(`<p14:prism/>`, 1300),
   vortex: () => p14(`<p14:vortex dir="r"/>`, 1300),
