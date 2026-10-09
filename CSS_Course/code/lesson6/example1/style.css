@@ -1,0 +1,12 @@
+.container {
+  width: 90%;
+  max-width: 700px;
+  margin: 0 auto;
+  font-family: Arial;
+}
+.photo {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(cyan, blue);
+  border-radius: 12px;
+}
+img { max-width: 100%; height: auto; }

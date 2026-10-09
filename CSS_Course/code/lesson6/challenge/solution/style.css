@@ -1,0 +1,32 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+}
+article {
+  background: #dbe4ff;
+  padding: 20px;
+  border-radius: 10px;
+}
+aside {
+  background: #ffe4ec;
+  padding: 20px;
+  border-radius: 10px;
+}
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (min-width: 700px) {
+  .layout {
+    flex-direction: row;
+  }
+  article {
+    flex: 1;
+  }
+  aside {
+    width: 220px;
+    order: -1;
+  }
+}

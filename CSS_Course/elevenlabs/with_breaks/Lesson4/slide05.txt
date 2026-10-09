@@ -1,0 +1,1 @@
+display flex بتخلّي nav حاوية مرنة، فالشعار والروابط بقوا عناصر. <break time="0.9s" /> space-between: أول عنصر على الشمال، وآخر عنصر على اليمين. <break time="0.9s" /> align-items center: توسيط رأسي. <break time="0.9s" /> وحاوية الروابط نفسها flex، وgap بتحط ثمانتاشر بكسل بين الروابط.

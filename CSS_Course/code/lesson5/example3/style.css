@@ -1,0 +1,15 @@
+.page {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  grid-template-areas:
+    "head head"
+    "side main"
+    "foot foot";
+  gap: 8px;
+  font-family: Arial;
+}
+.page > * { background: #dbe4ff; padding: 16px; }
+header { grid-area: head; }
+aside { grid-area: side; }
+main { grid-area: main; }
+footer { grid-area: foot; }

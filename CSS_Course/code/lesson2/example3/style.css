@@ -1,0 +1,12 @@
+:root {
+  --brand: #2965f1;
+  --accent: #ff4f8b;
+}
+.btn {
+  background: var(--brand);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+.btn.alt { background: var(--accent); }

@@ -1,0 +1,1 @@
+كل عنصر صندوق: محتوى، padding، border، margin. الـ padding جوه الإطار، والـ margin برّه وشفاف. border-box بيخلّي العرض يشمل الـ padding والـ border. margin صفر وauto بيوسّط الصندوق اللي له عرض. وinline-block بيدّي العناصر الصغيرة عرض وارتفاع وpadding. والدرس الجاي: التخطيط بـ Flexbox. إلى اللقاء!

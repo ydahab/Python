@@ -1,0 +1,30 @@
+:root {
+  --ink: #1f2937;
+  --paper: #fff8e7;
+  --accent: #ff4f8b;
+}
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Georgia, serif;
+  padding: 24px;
+}
+h1 {
+  text-align: center;
+  letter-spacing: 2px;
+  font-size: 1.6rem;
+}
+blockquote {
+  font-size: 1.5rem;
+  line-height: 1.5;
+  border-left: 6px solid var(--accent);
+  padding-left: 16px;
+  margin-left: 0;
+}
+cite {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  font-style: normal;
+  color: var(--accent);
+}

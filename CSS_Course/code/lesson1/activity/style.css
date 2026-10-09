@@ -1,0 +1,25 @@
+/* Lesson 1 activity: style the profile card */
+
+body {
+  /* font-family, background-color, padding */
+}
+
+.profile {
+  /* background, border, border-radius, padding, width */
+}
+
+#name {
+  /* colour the heading */
+}
+
+.role {
+  /* colour and font-weight */
+}
+
+.btn {
+  /* colours, padding, border-radius, text-decoration */
+}
+
+.btn:hover {
+  /* a different background-color */
+}

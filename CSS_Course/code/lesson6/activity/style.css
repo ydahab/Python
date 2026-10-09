@@ -1,0 +1,32 @@
+/* Lesson 6 activity: responsive profile (mobile-first) */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+.wrap {
+  /* max-width, margin auto, padding */
+}
+
+h1 {
+  /* clamp() */
+}
+
+.skills {
+  /* grid + gap (one column) */
+}
+
+.skills div {
+  background: #dbe4ff;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+/* @media (min-width: 600px) { ... } */
+
+/* @media (min-width: 900px) { ... } */

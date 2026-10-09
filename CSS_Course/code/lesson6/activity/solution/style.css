@@ -1,0 +1,35 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+h1 {
+  font-size: clamp(1.5rem, 5vw, 2.6rem);
+  color: #2b3a8f;
+}
+.skills {
+  display: grid;
+  gap: 12px;
+}
+.skills div {
+  background: #dbe4ff;
+  padding: 16px;
+  border-radius: 10px;
+}
+@media (min-width: 600px) {
+  .skills {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 900px) {
+  .skills {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

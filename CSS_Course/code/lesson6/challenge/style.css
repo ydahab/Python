@@ -1,0 +1,21 @@
+/* Lesson 6 challenge: sidebar moves below or beside */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+}
+
+article {
+  background: #dbe4ff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+aside {
+  background: #ffe4ec;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* your layout rules here */

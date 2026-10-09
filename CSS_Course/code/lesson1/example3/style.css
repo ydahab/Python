@@ -1,0 +1,11 @@
+.nav { font-family: Arial; font-size: 20px; }
+.nav a {
+  color: #2965f1;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+.nav a:hover {
+  color: white;
+  background: #ff4f8b;
+}

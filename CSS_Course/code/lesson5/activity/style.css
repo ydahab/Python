@@ -1,0 +1,27 @@
+/* Lesson 5 activity: dashboard grid */
+
+body {
+  margin: 0;
+  background: #eef2ff;
+  font-family: Arial, sans-serif;
+}
+
+.stats {
+  /* grid, gap, padding, auto-fit columns */
+}
+
+.stat {
+  /* card styling */
+}
+
+.big {
+  /* span two columns */
+}
+
+.stat strong {
+  /* large number */
+}
+
+.stat span {
+  /* grey label */
+}

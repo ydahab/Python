@@ -1,0 +1,15 @@
+.cards {
+  display: grid;
+  gap: 12px;
+  font-family: Arial;
+}
+.card {
+  background: #eef2ff;
+  padding: 18px;
+  border-radius: 10px;
+}
+@media (min-width: 600px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
