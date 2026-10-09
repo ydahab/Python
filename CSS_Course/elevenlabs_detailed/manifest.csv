@@ -1,0 +1,99 @@
+﻿lesson,slide,title,characters,file
+1,1,عنوان الدرس,1070,with_breaks/Lesson1/slide01.txt
+1,2,هدف الدرس,1613,with_breaks/Lesson1/slide02.txt
+1,3,الأفكار الكبرى,2076,with_breaks/Lesson1/slide03.txt
+1,4,تشريح قاعدة CSS,1703,with_breaks/Lesson1/slide04.txt
+1,5,مثال ١ — محدِّدات العناصر,2269,with_breaks/Lesson1/slide05.txt
+1,6,مثال ٢ — الفئة والمعرِّف,1907,with_breaks/Lesson1/slide06.txt
+1,7,مثال ٣ — الأصناف الزائفة والأولوية,1558,with_breaks/Lesson1/slide07.txt
+1,8,في الحياة الحقيقية,1270,with_breaks/Lesson1/slide08.txt
+1,9,أخطاء شائعة,1332,with_breaks/Lesson1/slide09.txt
+1,10,نصائح وأفضل الممارسات,986,with_breaks/Lesson1/slide10.txt
+1,11,نشاط عملي — نسّق بطاقة تعريف,1745,with_breaks/Lesson1/slide11.txt
+1,12,التحدّي — قائمة نوادي المدرسة,1498,with_breaks/Lesson1/slide12.txt
+1,13,اختبار سريع,1091,with_breaks/Lesson1/slide13.txt
+1,14,الملخص,1132,with_breaks/Lesson1/slide14.txt
+2,1,عنوان الدرس,699,with_breaks/Lesson2/slide01.txt
+2,2,هدف الدرس,1335,with_breaks/Lesson2/slide02.txt
+2,3,الأفكار الكبرى,1457,with_breaks/Lesson2/slide03.txt
+2,4,الأزرق نفسه بأربع طرق,1585,with_breaks/Lesson2/slide04.txt
+2,5,مثال ١ — أربع طرق لكتابة اللون,1732,with_breaks/Lesson2/slide05.txt
+2,6,مثال ٢ — طباعة مقروءة,1732,with_breaks/Lesson2/slide06.txt
+2,7,مثال ٣ — متغيّرات CSS (الخصائص المخصّصة),1735,with_breaks/Lesson2/slide07.txt
+2,8,في الحياة الحقيقية,939,with_breaks/Lesson2/slide08.txt
+2,9,أخطاء شائعة,1014,with_breaks/Lesson2/slide09.txt
+2,10,نصائح وأفضل الممارسات,646,with_breaks/Lesson2/slide10.txt
+2,11,نشاط عملي — صمّم بطاقة اقتباس,1259,with_breaks/Lesson2/slide11.txt
+2,12,التحدّي — سمة فاتحة وسمة داكنة,993,with_breaks/Lesson2/slide12.txt
+2,13,اختبار سريع,771,with_breaks/Lesson2/slide13.txt
+2,14,الملخص,838,with_breaks/Lesson2/slide14.txt
+3,1,عنوان الدرس,614,with_breaks/Lesson3/slide01.txt
+3,2,هدف الدرس,1013,with_breaks/Lesson3/slide02.txt
+3,3,الأفكار الكبرى,1397,with_breaks/Lesson3/slide03.txt
+3,4,الصندوق طبقةً طبقة,1478,with_breaks/Lesson3/slide04.txt
+3,5,مثال ١ — الحشو والإطار والهامش,1648,with_breaks/Lesson3/slide05.txt
+3,6,مثال ٢ — content-box مقابل border-box,1707,with_breaks/Lesson3/slide06.txt
+3,7,مثال ٣ — التوسيط وinline-block,1633,with_breaks/Lesson3/slide07.txt
+3,8,في الواقع: البطاقات والأزرار والصفحات المريحة,834,with_breaks/Lesson3/slide08.txt
+3,9,أخطاء شائعة,935,with_breaks/Lesson3/slide09.txt
+3,10,نصائح وأفضل الممارسات,979,with_breaks/Lesson3/slide10.txt
+3,11,نشاط عملي — ابنِ بطاقة منتج,1089,with_breaks/Lesson3/slide11.txt
+3,12,تحدٍّ — بطاقة العمل بالمقاس الدقيق,1202,with_breaks/Lesson3/slide12.txt
+3,13,اختبار سريع,733,with_breaks/Lesson3/slide13.txt
+3,14,الملخص,712,with_breaks/Lesson3/slide14.txt
+4,1,عنوان الدرس,687,with_breaks/Lesson4/slide01.txt
+4,2,هدف الدرس,926,with_breaks/Lesson4/slide02.txt
+4,3,الأفكار الكبرى,1234,with_breaks/Lesson4/slide03.txt
+4,4,المحور الرئيسي والمحور المتعامد,1704,with_breaks/Lesson4/slide04.txt
+4,5,مثال ١ — شريط تنقّل,1452,with_breaks/Lesson4/slide05.txt
+4,6,مثال ٢ — بطاقات تلتفّ وتتقاسم المساحة,1652,with_breaks/Lesson4/slide06.txt
+4,7,مثال ٣ — وسّط أي شيء,1416,with_breaks/Lesson4/slide07.txt
+4,8,في الواقع: القوائم والبطاقات وأشرطة الأدوات,621,with_breaks/Lesson4/slide08.txt
+4,9,أخطاء شائعة,987,with_breaks/Lesson4/slide09.txt
+4,10,نصائح وأفضل الممارسات,694,with_breaks/Lesson4/slide10.txt
+4,11,نشاط عملي — صفحة الفريق,1035,with_breaks/Lesson4/slide11.txt
+4,12,تحدٍّ — رأس وشريط جانبي وتذييل,1097,with_breaks/Lesson4/slide12.txt
+4,13,اختبار سريع,629,with_breaks/Lesson4/slide13.txt
+4,14,الملخص,720,with_breaks/Lesson4/slide14.txt
+5,1,عنوان الدرس,643,with_breaks/Lesson5/slide01.txt
+5,2,هدف الدرس,901,with_breaks/Lesson5/slide02.txt
+5,3,الأفكار الكبرى,887,with_breaks/Lesson5/slide03.txt
+5,4,المسارات وخطوط الشبكة,1568,with_breaks/Lesson5/slide04.txt
+5,5,مثال ١ — شبكة بسيطة,1229,with_breaks/Lesson5/slide05.txt
+5,6,مثال ٢ — تمديد الصفوف والأعمدة,1183,with_breaks/Lesson5/slide06.txt
+5,7,مثال ٣ — تخطيط صفحة بمناطق مسمّاة,1608,with_breaks/Lesson5/slide07.txt
+5,8,في الواقع: المعارض ولوحات المعلومات والمجلات,732,with_breaks/Lesson5/slide08.txt
+5,9,أخطاء شائعة,853,with_breaks/Lesson5/slide09.txt
+5,10,نصائح وأفضل الممارسات,510,with_breaks/Lesson5/slide10.txt
+5,11,نشاط عملي — لوحة إحصاءات,1068,with_breaks/Lesson5/slide11.txt
+5,12,تحدٍّ — الصفحة الأولى لجريدة,899,with_breaks/Lesson5/slide12.txt
+5,13,اختبار سريع,626,with_breaks/Lesson5/slide13.txt
+5,14,الملخص,667,with_breaks/Lesson5/slide14.txt
+6,1,عنوان الدرس,514,with_breaks/Lesson6/slide01.txt
+6,2,هدف الدرس,793,with_breaks/Lesson6/slide02.txt
+6,3,الأفكار الكبرى,1319,with_breaks/Lesson6/slide03.txt
+6,4,صفحة واحدة، ثلاث شاشات,1093,with_breaks/Lesson6/slide04.txt
+6,5,مثال ١ — حاويات وصور مرنة,1481,with_breaks/Lesson6/slide05.txt
+6,6,مثال ٢ — استعلامات وسائط بأسلوب الجوال أولًا,1419,with_breaks/Lesson6/slide06.txt
+6,7,مثال ٣ — خط مرن وقائمة متجاوبة,1342,with_breaks/Lesson6/slide07.txt
+6,8,في الواقع: موقع واحد لكل الأجهزة,811,with_breaks/Lesson6/slide08.txt
+6,9,أخطاء شائعة,894,with_breaks/Lesson6/slide09.txt
+6,10,نصائح وأفضل الممارسات,565,with_breaks/Lesson6/slide10.txt
+6,11,نشاط عملي — صفحة تعريف متجاوبة,919,with_breaks/Lesson6/slide11.txt
+6,12,تحدٍّ — تخطيط يعيد ترتيب نفسه,946,with_breaks/Lesson6/slide12.txt
+6,13,اختبار سريع,755,with_breaks/Lesson6/slide13.txt
+6,14,الملخص,673,with_breaks/Lesson6/slide14.txt
+7,1,عنوان الدرس,572,with_breaks/Lesson7/slide01.txt
+7,2,هدف الدرس,813,with_breaks/Lesson7/slide02.txt
+7,3,الأفكار الكبرى,907,with_breaks/Lesson7/slide03.txt
+7,4,منحنى السرعة,1433,with_breaks/Lesson7/slide04.txt
+7,5,مثال ١ — انتقال عند التمرير,1326,with_breaks/Lesson7/slide05.txt
+7,6,مثال ٢ — حركة إطارات مفتاحية: كرة تقفز,1514,with_breaks/Lesson7/slide06.txt
+7,7,مثال ٣ — مؤشر تحميل (وتقليل الحركة),1414,with_breaks/Lesson7/slide07.txt
+7,8,في الواقع: تغذية راجعة وانتباه وسرد,682,with_breaks/Lesson7/slide08.txt
+7,9,أخطاء شائعة,1024,with_breaks/Lesson7/slide09.txt
+7,10,نصائح وأفضل الممارسات,464,with_breaks/Lesson7/slide10.txt
+7,11,نشاط عملي — صفحة هبوط متحرّكة,1156,with_breaks/Lesson7/slide11.txt
+7,12,تحدٍّ — بطاقة تنقلب,1227,with_breaks/Lesson7/slide12.txt
+7,13,اختبار سريع,617,with_breaks/Lesson7/slide13.txt
+7,14,الملخص,1045,with_breaks/Lesson7/slide14.txt

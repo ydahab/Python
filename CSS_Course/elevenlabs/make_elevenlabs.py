@@ -7,8 +7,16 @@ straight to ElevenLabs: one clean .txt per slide, in two flavours.
 import csv, json, re, sys
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
-SRC = HERE.parent / "script"
+import argparse
+ap = argparse.ArgumentParser()
+ap.add_argument("--src", default="../script", help="folder with the .md scripts (relative to this file)")
+ap.add_argument("--pattern", default="Lesson*_script_ar.md")
+ap.add_argument("--out", default=".", help="output folder (relative to this file)")
+ap.add_argument("--keep-teacher", action="store_true", help="keep teacher-only paragraphs (student follow-up tips, hints)")
+A = ap.parse_args()
+HERE = (Path(__file__).resolve().parent / A.out).resolve()
+SRC = (Path(__file__).resolve().parent / A.src).resolve()
+TEACHER = re.compile(r"^\*\[(نصايح لمتابعة|تلميح|ملاحظة للمعلّم|نقاش بعد الاختبار|حل سريع|سؤال متوقّع|تعليق ختامي|لو الطلاب)")
 
 # spoken forms for things a text-to-speech voice would read badly
 SAY = [
@@ -17,7 +25,8 @@ SAY = [
     (r"\bF12\b", "إف اتناشر"), (r"\bCtrl\b", "كنترول"), (r"\bShift\b", "شيفت"), (r"\bh1\b", "إتش وان"),
     (r"\bCSS\b", "سي إس إس"), (r"\bHTML\b", "إتش تي إم إل"), (r"\bID\b", "آي دي"), (r"\brgb\b", "آر جي بي"),
     (r"\bhsl\b", "إتش إس إل"), (r"\bfr\b", "إف آر"), (r"\bvh\b", "في إتش"), (r"\bef\b", "إي إف"),
-    (r"\bGrid\b", "جريد"), (r"\bgrid\b", "جريد"),
+    (r"\bGrid\b", "جريد"), (r"\bgrid\b", "جريد"), (r"\bvw\b", "في دبليو"), (r"\bCmd\b", "كوماند"),
+    (r"\bY\b", "واي"), (r"\bX\b", "إكس"), (r"\bB\b", "بي"), (r"\bR\b", "آر"), (r"\bG\b", "جي"),
 ]
 SINGLE = {"a": "إيه", "A": "إيه", "b": "بي", "p": "بي", "M": "إم"}
 PUNCT = "،.؟!:؛,…"
@@ -58,7 +67,8 @@ def speak(text, breaks):
             out.append(tok)
     t = "".join(out)
     t = re.sub(r"\s+", " ", t)
-    t = re.sub(r"\s+([،.؟!:؛])", r"\1", t)
+    t = re.sub(r"\s+([،.؟!؛])", r"\1", t)
+    t = re.sub(r"\s+(:)(?=\s|$)", r"\1", t)
     t = re.sub(r"(،\s*){2,}", "، ", t)
     t = t.replace("‏", "").strip()
     return t
@@ -68,10 +78,13 @@ def slides(md):
     for p in parts:
         head, _, body = p.partition("\n")
         m = re.match(r"الشريحة (\d+): (.*)", head.strip())
-        yield int(m.group(1)), m.group(2), "\n".join(l for l in body.split("\n") if l.strip() and l.strip() != "---")
+        lines = [l for l in body.split("\n") if l.strip() and l.strip() != "---"]
+        if not A.keep_teacher:
+            lines = [l for l in lines if not TEACHER.match(l.strip())]
+        yield int(m.group(1)), m.group(2), "\n".join(lines)
 
 rows = []
-for md_file in sorted(SRC.glob("Lesson*_script_ar.md")):
+for md_file in sorted(SRC.glob(A.pattern)):
     n = int(re.search(r"Lesson(\d+)", md_file.name).group(1))
     for k, title, body in slides(md_file.read_text(encoding="utf-8")):
         for flavour, br in (("with_breaks", True), ("plain", False)):
