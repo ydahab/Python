@@ -30,3 +30,6 @@ export NODE_PATH=<folder with pptxgenjs, react, react-dom, react-icons, sharp, j
 node build.js     # writes code/, assets/, decks/  (ONLY=3 builds one lesson)
 node extras.js    # writes playground.html, codepen.html, code/index.html
 ```
+
+## Arabic version
+`decks_ar/` holds the same seven decks in Arabic (right-to-left layout, mirrored slide design, Arabic UI labels and explanations). Build with `node build_ar.js` (translations live in `lessons_ar/`; it reuses the screenshots rendered by `build.js`). Code samples, the screenshots of the example pages and the downloadable code stay in English, as CSS itself is written in English; the diagrams are re-rendered with Arabic labels.

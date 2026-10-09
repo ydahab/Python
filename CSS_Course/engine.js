@@ -87,8 +87,21 @@ function makeCssHighlighter(C) {
 }
 
 // ---------- Deck factory ----------
+const UI_EN = {
+  pill: (n) => `LESSON ${n} OF 7`, objTitle: "Learning objective", objHead: "By the end of this lesson you can:", keyTerms: "Key terms",
+  example: (k) => `Example ${k}: `, htmlUsed: "HTML used", mistakes: "Common mistakes", avoid: "Avoid", doThis: "Do this instead", why: "Why",
+  tips: "Tips & best practices", time: "Time: ", hands: "Hands-on", challenge: "Challenge", goal: "Goal: your page should look like this",
+  target: "Target: match this result", bonus: "Bonus: ", startFrom: "Start from:  ", checkWith: "Check with:  ", quiz: "Quick check",
+  quizHint: "Think first, then click to reveal each answer.", summary: "Summary", keepGoing: "Keep going", yourCode: "Your code",
+  codeDesc: (n) => `code/lesson${n}/  (examples, activity, challenge)`, practise: "Practise online",
+  practiseDesc: "playground.html (works offline) or the CodePen links in codepen.html", nextLesson: "Next lesson", tryIt: "Try it yourself: ",
+  footer: (n, short) => `CSS for High School  |  Lesson ${n}: ${short}`,
+};
 function createDeck(L) {
+  const rtl = L.dir === "rtl";
+  const UI = { ...UI_EN, ...(L.ui || {}) };
   const pres = new pptxgen();
+  if (rtl) pres.rtlMode = true;
   pres.layout = "LAYOUT_WIDE";
   pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
   pres.title = `CSS for High School - Lesson ${L.n}: ${L.short}`;
@@ -96,20 +109,23 @@ function createDeck(L) {
   pres.author = "CSS for High School";
   const C = pres.SchemeColor, S = pres.ShapeType;
   const metas = [];
-  const footerText = `CSS for High School  |  Lesson ${L.n}: ${L.short}`;
-  const footer = (color) => ({ text: { text: footerText, options: { x: MX, y: 6.98, w: 8, h: 0.3, fontSize: 11, color, margin: 0, fontFace: THEME.bodyFontFace } } });
-  const ph = (name, type, o, text = "") => ({ placeholder: { options: { name, type, margin: 0, ...o }, text } });
-  const sn = (color) => ({ x: 12.1, y: 6.98, w: 0.63, h: 0.3, fontSize: 11, color, align: "right" });
+  const footerText = UI.footer(L.n, L.short);
+  const X = (x, w = 0) => (rtl ? W - x - w : x);
+  const st = rtl ? "right" : "left", en = rtl ? "left" : "right";
+  const rt = rtl ? { rtlMode: true, lang: "ar-EG" } : {};
+  const footer = (color) => ({ text: { text: footerText, options: { x: X(MX, 8), y: 6.98, w: 8, h: 0.3, fontSize: 11, color, margin: 0, fontFace: THEME.bodyFontFace, align: st, ...rt } } });
+  const ph = (name, type, o, text = "") => ({ placeholder: { options: { name, type, margin: 0, ...rt, ...o, ...(o.x !== undefined ? { x: X(o.x, o.w), align: o.align === "left" ? st : o.align } : {}) }, text } });
+  const sn = (color) => ({ x: X(12.1, 0.63), y: 6.98, w: 0.63, h: 0.3, fontSize: 11, color, align: en });
 
   pres.defineSlideMaster({ title: "TITLE", background: { color: C.text1 }, objects: [
     ph("title", "title", { x: 0.8, y: 2.2, w: 7.2, h: 2.1, fontSize: 48, bold: true, color: C.background1, align: "left", valign: "bottom" }),
     ph("sub", "body", { x: 0.8, y: 4.45, w: 7.0, h: 0.9, fontSize: 22, color: C.background2, align: "left", valign: "top" })] });
   pres.defineSlideMaster({ title: "CONTENT", background: { color: C.background1 }, objects: [
     ph("title", "title", { x: MX, y: 0.38, w: CW, h: 0.85, fontSize: 34, bold: true, color: C.text1, align: "left", valign: "middle" }),
-    { rect: { x: MX, y: 1.25, w: 0.9, h: 0.07, fill: { color: C.accent3 } } }, footer(C.text2)], slideNumber: sn(C.text2) });
+    { rect: { x: X(MX, 0.9), y: 1.25, w: 0.9, h: 0.07, fill: { color: C.accent3 } } }, footer(C.text2)], slideNumber: sn(C.text2) });
   pres.defineSlideMaster({ title: "DARK", background: { color: C.text1 }, objects: [
     ph("title", "title", { x: MX, y: 0.38, w: CW, h: 0.85, fontSize: 34, bold: true, color: C.background1, align: "left", valign: "middle" }),
-    { rect: { x: MX, y: 1.25, w: 0.9, h: 0.07, fill: { color: C.accent2 } } }, footer(C.background2)], slideNumber: sn(C.background2) });
+    { rect: { x: X(MX, 0.9), y: 1.25, w: 0.9, h: 0.07, fill: { color: C.accent2 } } }, footer(C.background2)], slideNumber: sn(C.background2) });
 
   const an = (g, l) => `a${g}_${l}`;
   const ak = (g, l) => `k${g}_${l}`;
@@ -117,7 +133,25 @@ function createDeck(L) {
   const tx = (s, text, o) => s.addText(text, { isTextBox: true, margin: 0, fontFace: THEME.bodyFontFace, ...o });
   const newSlide = (layout, transition, notes) => {
     const s = pres.addSlide({ masterName: layout });
-    metas.push({ transition });
+    metas.push({ transition: rtl && transition === "push" ? "pushr" : transition });
+    if (rtl) {
+      const a = { sh: s.addShape.bind(s), tx: s.addText.bind(s), im: s.addImage.bind(s) };
+      const mir = (o) => (s.__local || o.x === undefined ? o : { ...o, x: W - o.x - (o.w || 0) });
+      s.addShape = (t, o) => a.sh(t, mir(o));
+      s.addImage = (o) => a.im(mir(o));
+      s.addText = (text, o) => {
+        if (o.placeholder) return a.tx(text, o);
+        const first = Array.isArray(text) ? text[0] && text[0].options && text[0].options.fontFace : null;
+        const code = o.fontFace === CODE_FONT || first === CODE_FONT;
+        const r = mir(o);
+        if (code) return a.tx(text, r);
+        const lr = (t) => (typeof t === "string" ? t.replace(/(?<![\w])((?:--|[.#:@])[A-Za-z0-9][\w-]*)/g, "\u200E$1\u200E") : t);
+        const txt = Array.isArray(text) ? text.map((run) => ({ ...run, text: lr(run.text) })) : lr(text);
+        let al = r.align;
+        al = al === undefined || al === "left" ? "right" : al === "right" ? "left" : al;
+        return a.tx(txt, { ...r, align: al, rtlMode: true, lang: "ar-EG" });
+      };
+    }
     if (notes) s.addNotes(notes);
     return s;
   };
@@ -144,11 +178,13 @@ function createDeck(L) {
   function browserFrame(s, { x, y, w, imgs, url, g, maxH }) {
     const top = 0.44;
     const gap = 0.12;
+    const x0 = x;
     // all images share one height so they sit side by side
     const sumRatio = imgs.reduce((a, im) => a + im.w / im.h, 0);
     let h = Math.min(maxH, (w - gap * (imgs.length - 1)) / sumRatio);
     const totalW = imgs.reduce((a, im) => a + (im.w / im.h) * h, 0) + gap * (imgs.length - 1);
     const fw = Math.min(w, totalW);
+    if (rtl) { x = W - x0 - fw; s.__local = true; }
     s.addShape(S.rect, { x, y, w: fw, h: top + h + (imgs.length > 1 ? 0.3 : 0), fill: { color: C.background1 }, line: { color: "D5DAF0", width: 1 }, shadow: shadow(), objectName: an(g, "browser") });
     s.addShape(S.rect, { x, y, w: fw, h: top, fill: { color: C.background2 }, objectName: an(g, "browser_bar") });
     [C.accent3, C.accent2, C.accent5].forEach((c, i) => s.addShape(S.ellipse, { x: x + 0.2 + i * 0.22, y: y + 0.15, w: 0.13, h: 0.13, fill: { color: c }, objectName: an(g, "browser_dot") }));
@@ -161,6 +197,7 @@ function createDeck(L) {
       if (im.label) tx(s, im.label, { x: xx, y: y + top + h + 0.04, w: iw, h: 0.24, fontSize: 11, color: C.text2, align: "center", valign: "middle", objectName: an(g, "shot_label") });
       xx += iw + gap;
     });
+    s.__local = false;
     return { w: fw, h: top + h + (imgs.length > 1 ? 0.3 : 0) };
   }
 
@@ -168,6 +205,7 @@ function createDeck(L) {
     const fs = lines.length > 12 ? 12 : 13;
     const lh = (fs + 4) / 72;
     const h = 0.68 + lines.length * lh + 0.18;
+    if (rtl) { x = W - x - w; s.__local = true; }
     s.addShape(S.roundRect, { x, y, w, h, fill: { color: C.text1 }, rectRadius: 0.12, shadow: shadow(), objectName: an(g, "code") });
     [C.accent3, C.accent2, C.accent5].forEach((c, i) => s.addShape(S.ellipse, { x: x + 0.24 + i * 0.24, y: y + 0.2, w: 0.14, h: 0.14, fill: { color: c }, objectName: an(g, "code_dot") }));
     tx(s, file, { x: x + 1.1, y: y + 0.12, w: w - 1.35, h: 0.3, fontSize: 12, color: "8E97C9", fontFace: CODE_FONT, align: "right", objectName: an(g, "code_file") });
@@ -176,6 +214,7 @@ function createDeck(L) {
     const ty = y + 0.62;
     tx(s, runs, { x: x + 0.78, y: ty, w: w - 0.95, h: lines.length * lh + 0.05, valign: "top", lineSpacing: fs + 4, objectName: an(g, "code_text") });
     ann.forEach((a, i) => numBadge(s, i + 1, x + 0.3, ty + a.line * lh + (lh - 0.22) / 2, 0.22, palette[i % palette.length], g, 11));
+    s.__local = false;
     return { h };
   }
 
@@ -183,9 +222,9 @@ function createDeck(L) {
 
   T.title = (d) => {
     const s = newSlide("TITLE", "ripple", d.notes);
-    tx(s, "{ }", { x: 0.8, y: 0.55, w: 3, h: 1.0, fontSize: 60, bold: true, color: C.accent2, fontFace: CODE_FONT, objectName: an(5, "braces") });
+    tx(s, "{ }", { x: 0.8, y: 0.55, w: 3, h: 1.0, fontSize: 60, bold: true, color: C.accent2, fontFace: CODE_FONT, align: rtl ? "right" : "left", objectName: an(5, "braces") });
     s.addShape(S.roundRect, { x: 0.8, y: 1.6, w: 2.9, h: 0.46, fill: { color: C.accent3 }, rectRadius: 0.23, objectName: an(1, "pill") });
-    tx(s, `LESSON ${L.n} OF 7`, { x: 0.8, y: 1.6, w: 2.9, h: 0.46, fontSize: 14, bold: true, color: C.background1, align: "center", valign: "middle", charSpacing: 3, objectName: an(1, "pill_text") });
+    tx(s, UI.pill(L.n), { x: 0.8, y: 1.6, w: 2.9, h: 0.46, fontSize: 14, bold: true, color: C.background1, align: "center", valign: "middle", charSpacing: rtl ? 0 : 3, objectName: an(1, "pill_text") });
     s.addText(d.title, { placeholder: "title", objectName: an(2, "title") });
     s.addText(d.subtitle, { placeholder: "sub", objectName: an(3, "sub") });
     tx(s, d.meta, { x: 0.8, y: 5.55, w: 7, h: 0.4, fontSize: 16, color: C.accent2, objectName: an(4, "meta") });
@@ -198,15 +237,15 @@ function createDeck(L) {
 
   T.objectives = (d) => {
     const s = newSlide("CONTENT", "fade", d.notes);
-    title(s, "Learning objective");
+    title(s, UI.objTitle);
     s.addShape(S.roundRect, { x: MX, y: 1.65, w: 6.0, h: 5.1, fill: { color: C.background2 }, rectRadius: 0.12, objectName: an(2, "panel") });
-    tx(s, "By the end of this lesson you can:", { x: MX + 0.35, y: 1.85, w: 5.3, h: 0.5, fontSize: 19, bold: true, color: C.text2, objectName: an(2, "head") });
+    tx(s, UI.objHead, { x: MX + 0.35, y: 1.85, w: 5.3, h: 0.5, fontSize: 19, bold: true, color: C.text2, objectName: an(2, "head") });
     d.objectives.forEach((o, i) => {
       const y = 2.55 + i * 1.4;
       iconCircle(s, "FaCheckCircle", MX + 0.35, y + 0.1, 0.6, C.accent5, 3 + i);
       tx(s, o, { x: MX + 1.15, y, w: 4.55, h: 1.2, fontSize: 18, color: C.text1, valign: "middle", objectName: an(3 + i, "obj") });
     });
-    tx(s, "Key terms", { x: 6.95, y: 1.65, w: 5.7, h: 0.5, fontSize: 19, bold: true, color: C.text2, objectName: an(6, "terms_head") });
+    tx(s, UI.keyTerms, { x: 6.95, y: 1.65, w: 5.7, h: 0.5, fontSize: 19, bold: true, color: C.text2, objectName: an(6, "terms_head") });
     d.terms.forEach((t, i) => {
       const y = 2.25 + i * 1.17;
       s.addShape(S.roundRect, { x: 6.95, y, w: 1.8, h: 0.5, fill: { color: palette[i % 6] }, rectRadius: 0.1, objectName: an(6 + i, "chip") });
@@ -251,7 +290,7 @@ function createDeck(L) {
 
   T.example = (d) => {
     const s = newSlide("CONTENT", ["push", "doors", "conveyor"][(d.k - 1) % 3], d.ann.map((a, i) => `${i + 1}. ${a.text}`).join("\n"));
-    title(s, `Example ${d.k}: ${d.title}`);
+    title(s, UI.example(d.k) + d.title);
     tx(s, d.intro, { x: MX, y: 1.38, w: CW, h: 0.4, fontSize: 16, color: C.text2, valign: "middle", objectName: an(2, "intro") });
     const lw = 6.15;
     const cb = cssCodeBox(s, { x: MX, y: 1.95, w: lw, lines: d.css.split("\n"), ann: d.ann, file: d.file, g: 3 });
@@ -259,7 +298,7 @@ function createDeck(L) {
     const hh = 6.85 - hy;
     if (hh > 0.7) {
       s.addShape(S.roundRect, { x: MX, y: hy, w: lw, h: hh, fill: { color: C.background2 }, rectRadius: 0.1, objectName: an(5, "html") });
-      tx(s, "HTML used", { x: MX + 0.2, y: hy + 0.08, w: 2, h: 0.28, fontSize: 11, bold: true, color: C.text2, objectName: an(5, "html_h") });
+      tx(s, UI.htmlUsed, { x: MX + 0.2, y: hy + 0.08, w: 2, h: 0.28, fontSize: 11, bold: true, color: C.text2, objectName: an(5, "html_h") });
       let hl = d.htmlNote.split("\n");
       let cap = Math.max(2, Math.floor((hh - 0.42) / 0.18));
       if (hl.length > cap) hl = [...hl.slice(0, cap - 1), "..."];
@@ -290,15 +329,15 @@ function createDeck(L) {
     });
     s.addShape(S.roundRect, { x: MX, y: 5.35, w: CW, h: 1.35, fill: { color: C.text1 }, rectRadius: 0.12, objectName: an(5, "try") });
     iconCircle(s, "FaSearch", MX + 0.35, 5.7, 0.65, C.accent2, 5);
-    tx(s, [{ text: "Try it yourself: ", options: { bold: true, color: C.accent2 } }, { text: d.tryIt, options: { color: C.background1 } }],
+    tx(s, [{ text: UI.tryIt, options: { bold: true, color: C.accent2 } }, { text: d.tryIt, options: { color: C.background1 } }],
       { x: MX + 1.3, y: 5.45, w: CW - 1.7, h: 1.15, fontSize: 16, valign: "middle", objectName: an(5, "try_text") });
     return s;
   };
 
   T.mistakes = (d) => {
     const s = newSlide("CONTENT", "fade", d.notes);
-    title(s, "Common mistakes");
-    const hdr = [["Avoid", MX, "FaTimesCircle"], ["Do this instead", 4.85, "FaCheckCircle"], ["Why", 9.15, "FaQuestionCircle"]];
+    title(s, UI.mistakes);
+    const hdr = [[UI.avoid, MX], [UI.doThis, 4.85], [UI.why, 9.15]];
     hdr.forEach(([t, x], i) => tx(s, t, { x, y: 1.5, w: 4, h: 0.35, fontSize: 15, bold: true, color: ["C0245A", "15803D", "2B3A8F"][i], objectName: an(1, "hdr") }));
     d.items.forEach((m, i) => {
       const y = 1.95 + i * 1.62, g = 2 + i;
@@ -315,7 +354,7 @@ function createDeck(L) {
 
   T.tips = (d) => {
     const s = newSlide("DARK", "vortex", d.notes);
-    title(s, "Tips & best practices");
+    title(s, UI.tips);
     const w = (CW - 0.4) / 2;
     d.items.forEach((t, i) => {
       const x = MX + (i % 2) * (w + 0.4), y = 1.65 + Math.floor(i / 2) * 2.6, g = 2 + i;
@@ -336,8 +375,8 @@ function createDeck(L) {
       s.addShape(S.roundRect, { x, y: 1.5, w, h: 0.36, fill: { color: fill }, rectRadius: 0.18, objectName: an(2, "chip") });
       tx(s, label, { x, y: 1.5, w, h: 0.36, fontSize: 12, bold: true, color: tc, align: "center", valign: "middle", objectName: an(2, "chip_t") });
     };
-    chip(MX, 1.5, `Time: ${d.time}`, C.accent2, C.text1);
-    chip(MX + 1.65, 1.9, dark ? "Challenge" : "Hands-on", dark ? C.accent3 : C.accent1, C.background1);
+    chip(MX, 1.5, UI.time + d.time, C.accent2, C.text1);
+    chip(MX + 1.65, 1.9, dark ? UI.challenge : UI.hands, dark ? C.accent3 : C.accent1, C.background1);
     tx(s, d.brief, { x: MX, y: 2.0, w: 6.2, h: 0.75, fontSize: 15, color: fg, valign: "top", objectName: an(3, "brief") });
     const n = d.steps.length;
     const pitch = Math.min(0.82, 3.1 / n);
@@ -348,24 +387,24 @@ function createDeck(L) {
     });
     if (d.bonus) {
       s.addShape(S.roundRect, { x: MX, y: 6.0, w: 6.2, h: 0.8, fill: { color: dark ? "1D2250" : "FFF4D1" }, rectRadius: 0.1, objectName: an(9, "bonus") });
-      tx(s, [{ text: "Bonus: ", options: { bold: true, color: dark ? C.accent2 : "9A6B00" } }, { text: d.bonus, options: { color: fg } }],
+      tx(s, [{ text: UI.bonus, options: { bold: true, color: dark ? C.accent2 : "9A6B00" } }, { text: d.bonus, options: { color: fg } }],
         { x: MX + 0.2, y: 6.0, w: 5.8, h: 0.8, fontSize: 13.5, valign: "middle", objectName: an(9, "bonus_t") });
     }
     const rx = 7.2, rw = W - MX - rx;
-    tx(s, d.goalLabel || "Goal: your page should look like this", { x: rx, y: 1.5, w: rw, h: 0.36, fontSize: 14, bold: true, color: dark ? C.accent2 : C.text2, valign: "middle", objectName: an(2, "goal_l") });
+    tx(s, d.goalLabel || UI.goal, { x: rx, y: 1.5, w: rw, h: 0.36, fontSize: 14, bold: true, color: dark ? C.accent2 : C.text2, valign: "middle", objectName: an(2, "goal_l") });
     const bf = browserFrame(s, { x: rx, y: 2.0, w: rw, imgs: d.imgs, url: d.url, g: 3, maxH: 3.0 });
     const fy = 2.0 + bf.h + 0.25;
     s.addShape(S.roundRect, { x: rx, y: fy, w: rw, h: 1.0, fill: { color: dark ? "1D2250" : C.background2 }, rectRadius: 0.1, objectName: an(10, "files") });
-    tx(s, [{ text: "Start from:  ", options: { bold: true, color: dark ? C.accent2 : C.text2, fontFace: THEME.bodyFontFace } }, { text: d.start, options: { fontFace: CODE_FONT, color: fg, breakLine: true } },
-      { text: "Check with:  ", options: { bold: true, color: dark ? C.accent2 : C.text2, fontFace: THEME.bodyFontFace } }, { text: d.solution, options: { fontFace: CODE_FONT, color: fg } }],
+    tx(s, [{ text: UI.startFrom, options: { bold: true, color: dark ? C.accent2 : C.text2, fontFace: THEME.bodyFontFace } }, { text: d.start, options: { fontFace: CODE_FONT, color: fg, breakLine: true } },
+      { text: UI.checkWith, options: { bold: true, color: dark ? C.accent2 : C.text2, fontFace: THEME.bodyFontFace } }, { text: d.solution, options: { fontFace: CODE_FONT, color: fg } }],
       { x: rx + 0.2, y: fy, w: rw - 0.4, h: 1.0, fontSize: 11.5, valign: "middle", objectName: an(10, "files_t") });
     return s;
   };
 
   T.quiz = (d) => {
     const s = newSlide("CONTENT", "fade", d.notes);
-    title(s, "Quick check");
-    tx(s, "Think first, then click to reveal each answer.", { x: MX, y: 1.38, w: CW, h: 0.35, fontSize: 15, color: C.text2, objectName: an(2, "hint") });
+    title(s, UI.quiz);
+    tx(s, UI.quizHint, { x: MX, y: 1.38, w: CW, h: 0.35, fontSize: 15, color: C.text2, objectName: an(2, "hint") });
     d.items.forEach((q, i) => {
       const y = 1.9 + i * 1.62, g = 3 + i;
       s.addShape(S.roundRect, { x: MX, y, w: CW, h: 1.45, fill: { color: C.background2 }, rectRadius: 0.12, objectName: an(g, "row") });
@@ -379,22 +418,22 @@ function createDeck(L) {
 
   T.summary = (d) => {
     const s = newSlide("CONTENT", "ripple", d.notes);
-    title(s, "Summary");
+    title(s, UI.summary);
     d.points.forEach((p, i) => {
       const y = 1.65 + i * 1.02, g = 2 + i;
       iconCircle(s, "FaCheckCircle", MX, y + 0.08, 0.55, C.accent5, g);
       tx(s, p, { x: MX + 0.8, y, w: 6.3, h: 0.95, fontSize: 16.5, color: C.text1, valign: "middle", objectName: an(g, "pt") });
     });
     s.addShape(S.roundRect, { x: 8.0, y: 1.65, w: 4.73, h: 5.05, fill: { color: C.text1 }, rectRadius: 0.14, objectName: an(8, "panel") });
-    tx(s, "Keep going", { x: 8.35, y: 1.85, w: 4.0, h: 0.5, fontSize: 21, bold: true, color: C.accent2, objectName: an(8, "panel_h") });
+    tx(s, UI.keepGoing, { x: 8.35, y: 1.85, w: 4.0, h: 0.5, fontSize: 21, bold: true, color: C.accent2, objectName: an(8, "panel_h") });
     tx(s, [
-      { text: "Your code", options: { bold: true, color: C.accent6, breakLine: true } },
-      { text: `code/lesson${L.n}/  (examples, activity, challenge)`, options: { fontFace: CODE_FONT, fontSize: 12, color: C.background1, breakLine: true } },
+      { text: UI.yourCode, options: { bold: true, color: C.accent6, breakLine: true } },
+      { text: UI.codeDesc(L.n), options: { fontFace: CODE_FONT, fontSize: 12, color: C.background1, breakLine: true } },
       { text: " ", options: { fontSize: 8, breakLine: true } },
-      { text: "Practise online", options: { bold: true, color: C.accent6, breakLine: true } },
-      { text: "playground.html (works offline) or the CodePen links in codepen.html", options: { color: C.background1, breakLine: true } },
+      { text: UI.practise, options: { bold: true, color: C.accent6, breakLine: true } },
+      { text: UI.practiseDesc, options: { color: C.background1, breakLine: true } },
       { text: " ", options: { fontSize: 8, breakLine: true } },
-      { text: "Next lesson", options: { bold: true, color: C.accent6, breakLine: true } },
+      { text: UI.nextLesson, options: { bold: true, color: C.accent6, breakLine: true } },
       { text: d.next, options: { color: C.background1 } },
     ], { x: 8.35, y: 2.5, w: 4.05, h: 4.0, fontSize: 14.5, valign: "top", objectName: an(9, "panel_b") });
     return s;

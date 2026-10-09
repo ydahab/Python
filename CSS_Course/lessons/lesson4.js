@@ -108,7 +108,7 @@ module.exports = {
     html: `<nav class="nav">\n  <a class="logo" href="#">Class 3B</a>\n  <div class="links"><a href="#">Team</a><a href="#">News</a></div>\n</nav>\n<div class="team">\n  <div class="member"><div class="avatar"></div><strong>Omar</strong><span>Designer</span></div>\n  <div class="member"><div class="avatar"></div><strong>Salma</strong><span>Developer</span></div>\n  <div class="member"><div class="avatar"></div><strong>Karim</strong><span>Tester</span></div>\n</div>`,
     starter: `/* Lesson 4 activity: team page */\n\nbody {\n  margin: 0;\n  font-family: Arial, sans-serif;\n}\n\n.nav {\n  /* flex, space-between, centred, dark background, padding */\n}\n\n.nav a {\n  color: white;\n  text-decoration: none;\n}\n\n.links {\n  /* flex and gap */\n}\n\n.team {\n  /* flex, gap, wrap, padding */\n}\n\n.member {\n  /* flex: 1 1 180px, column layout, centred items */\n}\n\n.avatar {\n  /* bonus: coloured circle */\n}\n`,
     solution: `body {\n  margin: 0;\n  font-family: Arial, sans-serif;\n}\n.nav {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  background: #1e2a78;\n  padding: 14px 20px;\n}\n.nav a {\n  color: white;\n  text-decoration: none;\n}\n.links {\n  display: flex;\n  gap: 16px;\n}\n.team {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 16px;\n  padding: 20px;\n}\n.member {\n  flex: 1 1 180px;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 6px;\n  padding: 20px;\n  background: #eef2ff;\n  border-radius: 12px;\n}\n.avatar {\n  width: 60px;\n  height: 60px;\n  border-radius: 50%;\n  background: #ff4f8b;\n}`,
-    vp: [700, 270],
+    vp: [800, 290],
   },
   challenge: {
     title: "Challenge: header, sidebar, footer", time: "30 min",
